@@ -5,6 +5,8 @@ import (
 	"github.com/DiasOrazbaev/adv2final/account_service/internal/models/entity"
 	accountpb "github.com/DiasOrazbaev/adv2final/account_service/pkg/proto"
 	"github.com/rs/zerolog"
+	status "google.golang.org/grpc/status"
+
 	"google.golang.org/grpc"
 )
 
@@ -24,12 +26,38 @@ func (a *Account) Register(grpc *grpc.Server) {
 	accountpb.RegisterAccountServiceServer(grpc, a)
 }
 
-func (a *Account) GetAccountByID(context.Context, *accountpb.GetAccountByIDRequest) (*accountpb.GetAccountByIDResponse, error) {
+func (a *Account) GetAccountByID(ctx context.Context, req *accountpb.GetAccountByIDRequest) (*accountpb.GetAccountByIDResponse, error) {
 	a.log.Info().Msg("GetAccountByID")
-	return &accountpb.GetAccountByIDResponse{}, nil
+	acc, err := a.accountService.GetAccountByID(ctx, int(req.AccountId))
+	if err != nil {
+		a.log.Error().Err(err).Msg("GetAccountByID")
+		return nil, status.Error(12, err.Error())
+	}
+	return &accountpb.GetAccountByIDResponse{
+		Account: &accountpb.Account{
+			Id:            int64(acc.ID),
+			AccountNumber: int64(acc.AccountNumber),
+			UserId:        int64(acc.UserID),
+		},
+	}, nil
 }
 
-func (a *Account) GetAccountsByUserID(context.Context, *accountpb.GetAccountsByUserIDRequest) (*accountpb.GetAccountsByUserIDResponse, error) {
+func (a *Account) GetAccountsByUserID(ctx context.Context, req *accountpb.GetAccountsByUserIDRequest) (*accountpb.GetAccountsByUserIDResponse, error) {
 	a.log.Info().Msg("GetAccountsByUserID")
-	return &accountpb.GetAccountsByUserIDResponse{}, nil
+	accs, err := a.accountService.GetAccountsByUserID(ctx, int(req.UserId))
+	if err != nil {
+		a.log.Error().Err(err).Msg("GetAccountsByUserID")
+		return nil, status.Error(12, err.Error())
+	}
+	accounts := make([]*accountpb.Account, 0, len(accs))
+	for _, acc := range accs {
+		accounts = append(accounts, &accountpb.Account{
+			Id:            int64(acc.ID),
+			AccountNumber: int64(acc.AccountNumber),
+			UserId:        int64(acc.UserID),
+		})
+	}
+	return &accountpb.GetAccountsByUserIDResponse{
+		Accounts: accounts,
+	}, nil
 }

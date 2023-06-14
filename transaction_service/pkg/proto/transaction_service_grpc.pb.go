@@ -4,7 +4,7 @@
 // - protoc             v3.15.8
 // source: proto/transaction_service.proto
 
-package accountpb
+package transactionpb
 
 import (
 	context "context"
@@ -18,194 +18,158 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// AccountServiceClient is the client API for AccountService service.
+// TransactionServiceClient is the client API for TransactionService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type AccountServiceClient interface {
-	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
-	GetUserByID(ctx context.Context, in *GetUserByIDRequest, opts ...grpc.CallOption) (*GetUserByIDResponse, error)
-	GetAccountByID(ctx context.Context, in *GetAccountByIDRequest, opts ...grpc.CallOption) (*GetAccountByIDResponse, error)
-	GetAccountsByUserID(ctx context.Context, in *GetAccountsByUserIDRequest, opts ...grpc.CallOption) (*GetAccountsByUserIDResponse, error)
+type TransactionServiceClient interface {
+	CreateTransaction(ctx context.Context, in *CreateTransactionRequest, opts ...grpc.CallOption) (*CreateTransactionResponse, error)
+	GetTransactionByID(ctx context.Context, in *GetTransactionByIDRequest, opts ...grpc.CallOption) (*GetTransactionByIDResponse, error)
+	GetTransactionsByAccountID(ctx context.Context, in *GetTransactionsByAccountIDRequest, opts ...grpc.CallOption) (*GetTransactionsByAccountIDResponse, error)
 }
 
-type accountServiceClient struct {
+type transactionServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewAccountServiceClient(cc grpc.ClientConnInterface) AccountServiceClient {
-	return &accountServiceClient{cc}
+func NewTransactionServiceClient(cc grpc.ClientConnInterface) TransactionServiceClient {
+	return &transactionServiceClient{cc}
 }
 
-func (c *accountServiceClient) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error) {
-	out := new(CreateUserResponse)
-	err := c.cc.Invoke(ctx, "/account.AccountService/CreateUser", in, out, opts...)
+func (c *transactionServiceClient) CreateTransaction(ctx context.Context, in *CreateTransactionRequest, opts ...grpc.CallOption) (*CreateTransactionResponse, error) {
+	out := new(CreateTransactionResponse)
+	err := c.cc.Invoke(ctx, "/transaction.TransactionService/CreateTransaction", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *accountServiceClient) GetUserByID(ctx context.Context, in *GetUserByIDRequest, opts ...grpc.CallOption) (*GetUserByIDResponse, error) {
-	out := new(GetUserByIDResponse)
-	err := c.cc.Invoke(ctx, "/account.AccountService/GetUserByID", in, out, opts...)
+func (c *transactionServiceClient) GetTransactionByID(ctx context.Context, in *GetTransactionByIDRequest, opts ...grpc.CallOption) (*GetTransactionByIDResponse, error) {
+	out := new(GetTransactionByIDResponse)
+	err := c.cc.Invoke(ctx, "/transaction.TransactionService/GetTransactionByID", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *accountServiceClient) GetAccountByID(ctx context.Context, in *GetAccountByIDRequest, opts ...grpc.CallOption) (*GetAccountByIDResponse, error) {
-	out := new(GetAccountByIDResponse)
-	err := c.cc.Invoke(ctx, "/account.AccountService/GetAccountByID", in, out, opts...)
+func (c *transactionServiceClient) GetTransactionsByAccountID(ctx context.Context, in *GetTransactionsByAccountIDRequest, opts ...grpc.CallOption) (*GetTransactionsByAccountIDResponse, error) {
+	out := new(GetTransactionsByAccountIDResponse)
+	err := c.cc.Invoke(ctx, "/transaction.TransactionService/GetTransactionsByAccountID", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *accountServiceClient) GetAccountsByUserID(ctx context.Context, in *GetAccountsByUserIDRequest, opts ...grpc.CallOption) (*GetAccountsByUserIDResponse, error) {
-	out := new(GetAccountsByUserIDResponse)
-	err := c.cc.Invoke(ctx, "/account.AccountService/GetAccountsByUserID", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// AccountServiceServer is the server API for AccountService service.
-// All implementations must embed UnimplementedAccountServiceServer
+// TransactionServiceServer is the server API for TransactionService service.
+// All implementations must embed UnimplementedTransactionServiceServer
 // for forward compatibility
-type AccountServiceServer interface {
-	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
-	GetUserByID(context.Context, *GetUserByIDRequest) (*GetUserByIDResponse, error)
-	GetAccountByID(context.Context, *GetAccountByIDRequest) (*GetAccountByIDResponse, error)
-	GetAccountsByUserID(context.Context, *GetAccountsByUserIDRequest) (*GetAccountsByUserIDResponse, error)
-	mustEmbedUnimplementedAccountServiceServer()
+type TransactionServiceServer interface {
+	CreateTransaction(context.Context, *CreateTransactionRequest) (*CreateTransactionResponse, error)
+	GetTransactionByID(context.Context, *GetTransactionByIDRequest) (*GetTransactionByIDResponse, error)
+	GetTransactionsByAccountID(context.Context, *GetTransactionsByAccountIDRequest) (*GetTransactionsByAccountIDResponse, error)
+	mustEmbedUnimplementedTransactionServiceServer()
 }
 
-// UnimplementedAccountServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedAccountServiceServer struct {
+// UnimplementedTransactionServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedTransactionServiceServer struct {
 }
 
-func (UnimplementedAccountServiceServer) CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
+func (UnimplementedTransactionServiceServer) CreateTransaction(context.Context, *CreateTransactionRequest) (*CreateTransactionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateTransaction not implemented")
 }
-func (UnimplementedAccountServiceServer) GetUserByID(context.Context, *GetUserByIDRequest) (*GetUserByIDResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetUserByID not implemented")
+func (UnimplementedTransactionServiceServer) GetTransactionByID(context.Context, *GetTransactionByIDRequest) (*GetTransactionByIDResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTransactionByID not implemented")
 }
-func (UnimplementedAccountServiceServer) GetAccountByID(context.Context, *GetAccountByIDRequest) (*GetAccountByIDResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAccountByID not implemented")
+func (UnimplementedTransactionServiceServer) GetTransactionsByAccountID(context.Context, *GetTransactionsByAccountIDRequest) (*GetTransactionsByAccountIDResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTransactionsByAccountID not implemented")
 }
-func (UnimplementedAccountServiceServer) GetAccountsByUserID(context.Context, *GetAccountsByUserIDRequest) (*GetAccountsByUserIDResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAccountsByUserID not implemented")
-}
-func (UnimplementedAccountServiceServer) mustEmbedUnimplementedAccountServiceServer() {}
+func (UnimplementedTransactionServiceServer) mustEmbedUnimplementedTransactionServiceServer() {}
 
-// UnsafeAccountServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to AccountServiceServer will
+// UnsafeTransactionServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to TransactionServiceServer will
 // result in compilation errors.
-type UnsafeAccountServiceServer interface {
-	mustEmbedUnimplementedAccountServiceServer()
+type UnsafeTransactionServiceServer interface {
+	mustEmbedUnimplementedTransactionServiceServer()
 }
 
-func RegisterAccountServiceServer(s grpc.ServiceRegistrar, srv AccountServiceServer) {
-	s.RegisterService(&AccountService_ServiceDesc, srv)
+func RegisterTransactionServiceServer(s grpc.ServiceRegistrar, srv TransactionServiceServer) {
+	s.RegisterService(&TransactionService_ServiceDesc, srv)
 }
 
-func _AccountService_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateUserRequest)
+func _TransactionService_CreateTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateTransactionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AccountServiceServer).CreateUser(ctx, in)
+		return srv.(TransactionServiceServer).CreateTransaction(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/account.AccountService/CreateUser",
+		FullMethod: "/transaction.TransactionService/CreateTransaction",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AccountServiceServer).CreateUser(ctx, req.(*CreateUserRequest))
+		return srv.(TransactionServiceServer).CreateTransaction(ctx, req.(*CreateTransactionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AccountService_GetUserByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetUserByIDRequest)
+func _TransactionService_GetTransactionByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTransactionByIDRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AccountServiceServer).GetUserByID(ctx, in)
+		return srv.(TransactionServiceServer).GetTransactionByID(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/account.AccountService/GetUserByID",
+		FullMethod: "/transaction.TransactionService/GetTransactionByID",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AccountServiceServer).GetUserByID(ctx, req.(*GetUserByIDRequest))
+		return srv.(TransactionServiceServer).GetTransactionByID(ctx, req.(*GetTransactionByIDRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AccountService_GetAccountByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetAccountByIDRequest)
+func _TransactionService_GetTransactionsByAccountID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTransactionsByAccountIDRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AccountServiceServer).GetAccountByID(ctx, in)
+		return srv.(TransactionServiceServer).GetTransactionsByAccountID(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/account.AccountService/GetAccountByID",
+		FullMethod: "/transaction.TransactionService/GetTransactionsByAccountID",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AccountServiceServer).GetAccountByID(ctx, req.(*GetAccountByIDRequest))
+		return srv.(TransactionServiceServer).GetTransactionsByAccountID(ctx, req.(*GetTransactionsByAccountIDRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AccountService_GetAccountsByUserID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetAccountsByUserIDRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AccountServiceServer).GetAccountsByUserID(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/account.AccountService/GetAccountsByUserID",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AccountServiceServer).GetAccountsByUserID(ctx, req.(*GetAccountsByUserIDRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-// AccountService_ServiceDesc is the grpc.ServiceDesc for AccountService service.
+// TransactionService_ServiceDesc is the grpc.ServiceDesc for TransactionService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var AccountService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "account.AccountService",
-	HandlerType: (*AccountServiceServer)(nil),
+var TransactionService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "transaction.TransactionService",
+	HandlerType: (*TransactionServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CreateUser",
-			Handler:    _AccountService_CreateUser_Handler,
+			MethodName: "CreateTransaction",
+			Handler:    _TransactionService_CreateTransaction_Handler,
 		},
 		{
-			MethodName: "GetUserByID",
-			Handler:    _AccountService_GetUserByID_Handler,
+			MethodName: "GetTransactionByID",
+			Handler:    _TransactionService_GetTransactionByID_Handler,
 		},
 		{
-			MethodName: "GetAccountByID",
-			Handler:    _AccountService_GetAccountByID_Handler,
-		},
-		{
-			MethodName: "GetAccountsByUserID",
-			Handler:    _AccountService_GetAccountsByUserID_Handler,
+			MethodName: "GetTransactionsByAccountID",
+			Handler:    _TransactionService_GetTransactionsByAccountID_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

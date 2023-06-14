@@ -1,62 +1,46 @@
 syntax = "proto3";
 
-package account;
+package transaction;
+
 import "google/protobuf/timestamp.proto";
-option go_package = "pkg/accountpb";
+option go_package = "pkg/transactionpb";
 
-service AccountService {
-  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {}
-  rpc GetUserByID(GetUserByIDRequest) returns (GetUserByIDResponse) {}
-  rpc GetAccountByID(GetAccountByIDRequest) returns (GetAccountByIDResponse) {}
-  rpc GetAccountsByUserID(GetAccountsByUserIDRequest) returns (GetAccountsByUserIDResponse) {}
-}
-
-message User {
+message Transaction {
   int64 id = 1;
-  string username = 2;
-  string email = 3;
-  string full_name = 4;
-  google.protobuf.Timestamp created_at = 5;
+  int64 account_id = 2;
+  string description = 3;
+  double amount = 4;
+  google.protobuf.Timestamp timestamp = 5;
 }
 
-message Account {
-  int64 id = 1;
-  int64 user_id = 2;
-  string account_number = 3;
-  double balance = 4;
-  google.protobuf.Timestamp created_at = 5;
+message CreateTransactionRequest {
+  int64 account_id = 1;
+  string description = 2;
+  double amount = 3;
 }
 
-message CreateUserRequest {
-  string username = 1;
-  string email = 2;
-  string full_name = 3;
+message CreateTransactionResponse {
+  int64 transaction_id = 1;
 }
 
-message CreateUserResponse {
-  int64 user_id = 1;
+message GetTransactionByIDRequest {
+  int64 transaction_id = 1;
 }
 
-message GetUserByIDRequest {
-  int64 user_id = 1;
+message GetTransactionByIDResponse {
+  Transaction transaction = 1;
 }
 
-message GetUserByIDResponse {
-  User user = 1;
-}
-
-message GetAccountByIDRequest {
+message GetTransactionsByAccountIDRequest {
   int64 account_id = 1;
 }
 
-message GetAccountByIDResponse {
-  Account account = 1;
+message GetTransactionsByAccountIDResponse {
+  repeated Transaction transactions = 1;
 }
 
-message GetAccountsByUserIDRequest {
-  int64 user_id = 1;
-}
-
-message GetAccountsByUserIDResponse {
-  repeated Account accounts = 1;
+service TransactionService {
+  rpc CreateTransaction(CreateTransactionRequest) returns (CreateTransactionResponse);
+  rpc GetTransactionByID(GetTransactionByIDRequest) returns (GetTransactionByIDResponse);
+  rpc GetTransactionsByAccountID(GetTransactionsByAccountIDRequest) returns (GetTransactionsByAccountIDResponse);
 }

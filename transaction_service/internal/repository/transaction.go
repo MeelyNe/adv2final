@@ -23,7 +23,7 @@ func (t *Transaction) CreateTransaction(ctx context.Context, transaction *entity
 	return nil
 }
 
-func (t *Transaction) GetTransactionByID(ctx context.Context, transactionID string) (*entity.Transaction, error) {
+func (t *Transaction) GetTransactionByID(ctx context.Context, transactionID int) (*entity.Transaction, error) {
 	query := `SELECT id, type, amount, timestamp FROM transactions WHERE id = $1`
 	row := t.db.QueryRowContext(ctx, query, transactionID)
 	transaction := &entity.Transaction{}
@@ -34,7 +34,7 @@ func (t *Transaction) GetTransactionByID(ctx context.Context, transactionID stri
 	return transaction, nil
 }
 
-func (t *Transaction) GetTransactionsByAccountID(ctx context.Context, accountID string) ([]*entity.Transaction, error) {
+func (t *Transaction) GetTransactionsByAccountID(ctx context.Context, accountID int) ([]*entity.Transaction, error) {
 	query := `SELECT id, type, amount, timestamp FROM transactions WHERE account_id = $1`
 	rows, err := t.db.QueryContext(ctx, query, accountID)
 	if err != nil {

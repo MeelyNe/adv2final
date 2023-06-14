@@ -3,47 +3,77 @@ package grpc
 import (
 	"context"
 	"github.com/DiasOrazbaev/transaction_service/internal/models/entity"
-	accountpb "github.com/DiasOrazbaev/transaction_service/pkg/proto"
+	transactionpb "github.com/DiasOrazbaev/transaction_service/pkg/proto"
 	"github.com/rs/zerolog"
-	"google.golang.org/grpc"
+	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type transactionService interface {
 	CreateTransaction(ctx context.Context, transaction *entity.Transaction) (*entity.Transaction, error)
-	GetTransactionByID(ctx context.Context, transactionID string) (*entity.Transaction, error)
-	GetTransactionsByAccountID(ctx context.Context, accountID string) ([]*entity.Transaction, error)
+	GetTransactionByID(ctx context.Context, transactionID int) (*entity.Transaction, error)
+	GetTransactionsByAccountID(ctx context.Context, accountID int) ([]*entity.Transaction, error)
 }
 
 type TransactionServiceServer struct {
 	transactionService transactionService
 	log                *zerolog.Logger
-	accountpb.UnimplementedAccountServiceServer
+	transactionpb.UnimplementedTransactionServiceServer
 }
 
 func NewTransactionServiceServer(transactionService transactionService, log *zerolog.Logger) *TransactionServiceServer {
 	return &TransactionServiceServer{transactionService: transactionService, log: log}
 }
 
-func (t *TransactionServiceServer) Register(s *grpc.Server) {
-	accountpb.RegisterAccountServiceServer(s, t)
-}
+func (t *TransactionServiceServer) CreateTransaction(ctx context.Context, req *transactionpb.CreateTransactionRequest) (*transactionpb.CreateTransactionResponse, error) {
+	t.log.Info().Msg("CreateTransaction")
+	transaction := &entity.Transaction{
+		AccountID: int(req.AccountId),
+		Amount:    req.Amount,
+	}
 
-func (t *TransactionServiceServer) CreateUser(context.Context, *accountpb.CreateUserRequest) (*accountpb.CreateUserResponse, error) {
-	t.log.Info().Msg("CreateUser")
-	return &accountpb.CreateUserResponse{}, nil
-}
+	transaction, err := t.transactionService.CreateTransaction(ctx, transaction)
+	if err != nil {
+		return nil, status.Error(12, err.Error())
+	}
 
-func (t *TransactionServiceServer) GetUserByID(context.Context, *accountpb.GetUserByIDRequest) (*accountpb.GetUserByIDResponse, error) {
-	t.log.Info().Msg("GetUserByID")
-	return &accountpb.GetUserByIDResponse{}, nil
+	return &transactionpb.CreateTransactionResponse{
+		TransactionId: int64(transaction.ID),
+	}, nil
 }
+func (t *TransactionServiceServer) GetTransactionByID(ctx context.Context, req *transactionpb.GetTransactionByIDRequest) (*transactionpb.GetTransactionByIDResponse, error) {
+	t.log.Info().Msg("GetTransactionByID")
+	transaction, err := t.transactionService.GetTransactionByID(ctx, int(req.TransactionId))
+	if err != nil {
+		return nil, status.Error(12, err.Error())
+	}
 
-func (t *TransactionServiceServer) GetAccountByID(context.Context, *accountpb.GetAccountByIDRequest) (*accountpb.GetAccountByIDResponse, error) {
-	t.log.Info().Msg("GetAccountByID")
-	return &accountpb.GetAccountByIDResponse{}, nil
+	return &transactionpb.GetTransactionByIDResponse{
+		Transaction: &transactionpb.Transaction{
+			AccountId: int64(transaction.AccountID),
+			Amount:    transaction.Amount,
+			Timestamp: timestamppb.New(transaction.Timestamp),
+		},
+	}, nil
 }
+func (t *TransactionServiceServer) GetTransactionsByAccountID(ctx context.Context, req *transactionpb.GetTransactionsByAccountIDRequest) (*transactionpb.GetTransactionsByAccountIDResponse, error) {
+	t.log.Info().Msg("GetTransactionsByAccountID")
 
-func (t *TransactionServiceServer) GetAccountsByUserID(context.Context, *accountpb.GetAccountsByUserIDRequest) (*accountpb.GetAccountsByUserIDResponse, error) {
-	t.log.Info().Msg("GetAccountsByUserID")
-	return &accountpb.GetAccountsByUserIDResponse{}, nil
+	transactions, err := t.transactionService.GetTransactionsByAccountID(ctx, int(req.AccountId))
+	if err != nil {
+		return nil, status.Error(12, err.Error())
+	}
+
+	var transactionsPb []*transactionpb.Transaction
+	for _, transaction := range transactions {
+		transactionsPb = append(transactionsPb, &transactionpb.Transaction{
+			AccountId: int64(transaction.AccountID),
+			Amount:    transaction.Amount,
+			Timestamp: timestamppb.New(transaction.Timestamp),
+		})
+	}
+
+	return &transactionpb.GetTransactionsByAccountIDResponse{
+		Transactions: transactionsPb,
+	}, nil
 }

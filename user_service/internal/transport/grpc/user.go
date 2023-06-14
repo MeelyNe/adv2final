@@ -6,6 +6,7 @@ import (
 	userpb "github.com/DiasOrazbaev/adv2final/user_service/pkg/proto"
 	"github.com/rs/zerolog"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type userService interface {
@@ -30,20 +31,66 @@ func (u *User) Register(s *grpc.Server) {
 
 func (u *User) CreateUser(ctx context.Context, in *userpb.CreateUserRequest) (*userpb.CreateUserResponse, error) {
 	u.log.Info().Msg("CreateUser")
-	return &userpb.CreateUserResponse{}, nil
+
+	cr := &entity.User{
+		Username:  in.User.Username,
+		Email:     in.User.Email,
+		Password:  in.User.Password,
+		FullName:  in.User.FullName,
+		CreatedAt: in.User.CreatedAt.AsTime(),
+	}
+
+	err := u.userService.CreateUser(ctx, cr)
+	if err != nil {
+		return nil, err
+	}
+
+	return &userpb.CreateUserResponse{
+		UserId: int32(cr.ID),
+	}, nil
 }
 
 func (u *User) GetUserByID(ctx context.Context, in *userpb.GetUserByIDRequest) (*userpb.GetUserByIDResponse, error) {
 	u.log.Info().Msg("GetUserByID")
-	return &userpb.GetUserByIDResponse{}, nil
+
+	user, err := u.userService.GetUserByID(ctx, int(in.UserId))
+	if err != nil {
+		return nil, err
+	}
+
+	return &userpb.GetUserByIDResponse{
+		User: &userpb.User{
+			Id:        int32(user.ID),
+			Username:  user.Username,
+			Password:  user.Password,
+			Email:     user.Email,
+			FullName:  user.FullName,
+			CreatedAt: timestamppb.New(user.CreatedAt),
+		},
+	}, nil
 }
 
 func (u *User) GetUserByUsername(ctx context.Context, in *userpb.GetUserByUsernameRequest) (*userpb.GetUserByUsernameResponse, error) {
 	u.log.Info().Msg("GetUserByUsername")
-	return &userpb.GetUserByUsernameResponse{}, nil
+
+	user, err := u.userService.GetUserByUsername(ctx, in.Username)
+	if err != nil {
+		return nil, err
+	}
+
+	return &userpb.GetUserByUsernameResponse{
+		User: &userpb.User{
+			Id:        int32(user.ID),
+			Username:  user.Username,
+			Password:  user.Password,
+			Email:     user.Email,
+			FullName:  user.FullName,
+			CreatedAt: timestamppb.New(user.CreatedAt),
+		},
+	}, nil
 }
 
 func (u *User) GetUserByEmail(ctx context.Context, in *userpb.GetUserByEmailRequest) (*userpb.GetUserByEmailResponse, error) {
 	u.log.Info().Msg("GetUserByEmail")
-	return &userpb.GetUserByEmailResponse{}, nil
+	return nil, nil
 }
