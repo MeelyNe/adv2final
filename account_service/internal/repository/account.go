@@ -19,6 +19,10 @@ type Account struct {
 	db *sql.DB
 }
 
+func NewAccount(db *sql.DB) *Account {
+	return &Account{db: db}
+}
+
 func (a *Account) CreateAccount(ctx context.Context, account *entity.Account) error {
 	query := `INSERT INTO accounts (user_id, account_number, balance, created_at) VALUES ($1, $2, $3, $4)`
 	_, err := a.db.ExecContext(ctx, query, account.UserID, account.AccountNumber, account.Balance, account.CreatedAt)
@@ -28,7 +32,7 @@ func (a *Account) CreateAccount(ctx context.Context, account *entity.Account) er
 	return nil
 }
 
-func (a *Account) GetAccountByID(ctx context.Context, accountID string) (*entity.Account, error) {
+func (a *Account) GetAccountByID(ctx context.Context, accountID int) (*entity.Account, error) {
 	query := `SELECT * FROM accounts WHERE id = $1`
 	row := a.db.QueryRowContext(ctx, query, accountID)
 	account := &entity.Account{}
@@ -39,7 +43,7 @@ func (a *Account) GetAccountByID(ctx context.Context, accountID string) (*entity
 	return account, nil
 }
 
-func (a *Account) GetAccountsByUserID(ctx context.Context, userID string) ([]*entity.Account, error) {
+func (a *Account) GetAccountsByUserID(ctx context.Context, userID int) ([]*entity.Account, error) {
 	query := `SELECT * FROM accounts WHERE user_id = $1`
 	rows, err := a.db.QueryContext(ctx, query, userID)
 	if err != nil {

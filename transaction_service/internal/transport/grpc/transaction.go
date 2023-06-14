@@ -5,6 +5,7 @@ import (
 	"github.com/DiasOrazbaev/transaction_service/internal/models/entity"
 	transactionpb "github.com/DiasOrazbaev/transaction_service/pkg/proto"
 	"github.com/rs/zerolog"
+	grpc2 "google.golang.org/grpc"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -23,6 +24,10 @@ type TransactionServiceServer struct {
 
 func NewTransactionServiceServer(transactionService transactionService, log *zerolog.Logger) *TransactionServiceServer {
 	return &TransactionServiceServer{transactionService: transactionService, log: log}
+}
+
+func (t *TransactionServiceServer) Register(grpcServer *grpc2.Server) {
+	transactionpb.RegisterTransactionServiceServer(grpcServer, t)
 }
 
 func (t *TransactionServiceServer) CreateTransaction(ctx context.Context, req *transactionpb.CreateTransactionRequest) (*transactionpb.CreateTransactionResponse, error) {

@@ -22,6 +22,10 @@ type Account struct {
 	accountpb.UnimplementedAccountServiceServer
 }
 
+func NewAccount(accountService accountService, log *zerolog.Logger) *Account {
+	return &Account{accountService: accountService, log: log}
+}
+
 func (a *Account) Register(grpc *grpc.Server) {
 	accountpb.RegisterAccountServiceServer(grpc, a)
 }

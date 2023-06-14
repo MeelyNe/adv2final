@@ -1,10 +1,12 @@
 package main
 
 import (
+	"github.com/DiasOrazbaev/adv2final/user_service/internal/config"
 	"github.com/DiasOrazbaev/adv2final/user_service/internal/repository"
 	"github.com/DiasOrazbaev/adv2final/user_service/internal/service"
 	grpc2 "github.com/DiasOrazbaev/adv2final/user_service/internal/transport/grpc"
 	"github.com/DiasOrazbaev/adv2final/user_service/pkg/database/postgres"
+	"github.com/joho/godotenv"
 	"github.com/rs/zerolog"
 	"google.golang.org/grpc"
 	"net"
@@ -14,7 +16,20 @@ import (
 func main() {
 	log := zerolog.New(os.Stdout).With().Timestamp().Logger()
 
-	db, err := postgres.NewConnection("postgres", "postgres", "localhost", "5432", "adv2final")
+	if err := godotenv.Load(); err != nil {
+		log.Error().Err(err).Msg("failed to load env")
+		return
+	}
+
+	cfg := config.GetConfig()
+
+	db, err := postgres.NewConnection(
+		cfg.DBUser,
+		cfg.DBPass,
+		cfg.DBHost,
+		cfg.DBPort,
+		cfg.DBName,
+	)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to connect to database")
 		return
